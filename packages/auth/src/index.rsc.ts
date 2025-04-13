@@ -1,22 +1,41 @@
-import { cache } from "react";
-import NextAuth from "next-auth";
+import { betterAuth } from "better-auth"
+import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { toNextJsHandler } from "better-auth/next-js";
 
-import { authConfig } from "./config";
+import type { Session, User } from "@splitsnap/db/schema";
+import { db } from "@splitsnap/db/client";
 
-export type { Session } from "next-auth";
+import { env } from "../env";
 
-const { handlers, auth: defaultAuth, signIn, signOut } = NextAuth(authConfig);
+export type SessionWithUser = Session & {
+  user: User;
+};
 
-/**
- * This is the main way to get session data for your RSCs.
- * This will de-duplicate all calls to next-auth's default `auth()` function and only call it once per request
- */
-const auth = cache(defaultAuth);
+export const validateToken = async (
+  token: string,
+): Promise<SessionWithUser | null> => {
+  const sessionToken = token.slice("Bearer ".length);
+  const session = await db.query.session.findFirst({
+    where: (session, { eq }) => eq(session.token, sessionToken),
+    with: {
+      user: true,
+    },
+  });
+  return session
+    ? session
+    : null;
+};
 
-export { handlers, auth, signIn, signOut };
+export const auth = betterAuth({
+  database: drizzleAdapter(db, {
+    provider: "pg",
+  }),
+  emailAndPassword: {
+    enabled: true
+  }
+})
 
-export {
-  invalidateSessionToken,
-  validateToken,
-  isSecureContext,
-} from "./config";
+export const baseAuthUrl = env.AUTH_URL ? `https://${env.AUTH_URL}` : `http://localhost:${process.env.PORT ?? 3000}`;
+
+export const nextJsHandler = toNextJsHandler(auth);
+export const nitroHandler = auth.handler;

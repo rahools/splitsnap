@@ -1,22 +1,53 @@
-import { auth, signIn, signOut } from "@splitsnap/auth";
+"use client";
+
+import { useSuspenseQuery, useQueryClient } from "@tanstack/react-query";
+
+import { authClient } from "@splitsnap/auth";
 import { Button } from "@splitsnap/ui/button";
 
-export async function AuthShowcase() {
-  const session = await auth();
+import { useTRPC } from "~/trpc/react";
+
+export function AuthShowcase() {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+  const { data: session } = useSuspenseQuery(
+    trpc.auth.getSession.queryOptions(),
+  );
 
   if (!session) {
     return (
-      <form>
-        <Button
-          size="lg"
-          formAction={async () => {
-            "use server";
-            await signIn("discord");
-          }}
-        >
-          Sign in with Discord
-        </Button>
-      </form>
+      <>
+        <div>
+          <Button
+            size="lg"
+            onClick={async () => {
+              await authClient.signUp.email({
+                email: "contact@rahools.com",
+                password: "super-secret-password",
+                name: "test",
+                image: "https://example.com/image.png",
+              });
+              queryClient.invalidateQueries(trpc.auth.pathFilter())
+            }}
+          >
+            Sign Up ASD
+          </Button>
+        </div>
+        <div>
+          <Button
+            size="lg"
+            onClick={async () => {
+              await authClient.signIn.email({
+                email: "contact@rahools.com",
+                password: "super-secret-password",
+              });
+              queryClient.invalidateQueries(trpc.auth.pathFilter())
+            }}
+          >
+            Sign In ASD
+          </Button>
+        </div>
+      </>
     );
   }
 
@@ -26,17 +57,17 @@ export async function AuthShowcase() {
         <span>Logged in as {session.user.name}</span>
       </p>
 
-      <form>
-        <Button
-          size="lg"
-          formAction={async () => {
-            "use server";
-            await signOut();
-          }}
-        >
-          Sign out
-        </Button>
-      </form>
+      <Button
+        size="lg"
+        onClick={async () => {
+          await authClient.revokeSession({
+            token: session.session.token,
+          });
+          queryClient.invalidateQueries(trpc.auth.pathFilter())
+        }}
+      >
+        Sign out
+      </Button>
     </div>
   );
 }

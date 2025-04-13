@@ -1,10 +1,9 @@
-import { sql } from "@vercel/postgres";
-import { drizzle } from "drizzle-orm/vercel-postgres";
+import type { NeonHttpDatabase } from "drizzle-orm/neon-http";
+import { drizzle } from "drizzle-orm/neon-http";
 
+import { env } from "../env";
 import * as schema from "./schema";
 
-export const db = drizzle({
-  client: sql,
-  schema,
-  casing: "snake_case",
+export const db: NeonHttpDatabase<typeof schema> = drizzle(env.POSTGRES_URL, {
+    schema,
 });

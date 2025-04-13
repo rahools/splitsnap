@@ -1,15 +1,17 @@
-import NextAuth from "next-auth";
+import { createAuthClient } from "better-auth/react";
 
-import { authConfig } from "./config";
+import type { Session, User } from "@splitsnap/db/schema";
 
-export type { Session } from "next-auth";
+import { env } from "../env";
 
-const { handlers, auth, signIn, signOut } = NextAuth(authConfig);
+export type SessionWithUser = Session & {
+  user: User;
+};
 
-export { handlers, auth, signIn, signOut };
+export const baseAuthUrl = env.NEXT_PUBLIC_AUTH_URL
+  ? `https://${env.NEXT_PUBLIC_AUTH_URL}`
+  : `http://localhost:${process.env.PORT ?? 3000}`;
 
-export {
-  invalidateSessionToken,
-  validateToken,
-  isSecureContext,
-} from "./config";
+export const authClient = createAuthClient({
+  baseURL: baseAuthUrl, // the base url of your auth server
+});

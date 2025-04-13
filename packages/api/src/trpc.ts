@@ -10,8 +10,7 @@ import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
 
-import type { Session } from "@splitsnap/auth";
-import { auth, validateToken } from "@splitsnap/auth";
+import { auth, validateToken } from "@splitsnap/auth/server";
 import { db } from "@splitsnap/db/client";
 
 /**
@@ -21,8 +20,8 @@ import { db } from "@splitsnap/db/client";
  */
 const isomorphicGetSession = async (headers: Headers) => {
   const authToken = headers.get("Authorization") ?? null;
-  if (authToken) return validateToken(authToken);
-  return auth();
+  if (authToken) validateToken(authToken);
+  return auth.api.getSession({ headers: headers });
 };
 
 /**
@@ -37,10 +36,7 @@ const isomorphicGetSession = async (headers: Headers) => {
  *
  * @see https://trpc.io/docs/server/context
  */
-export const createTRPCContext = async (opts: {
-  headers: Headers;
-  session: Session | null;
-}) => {
+export const createTRPCContext = async (opts: { headers: Headers }) => {
   const authToken = opts.headers.get("Authorization") ?? null;
   const session = await isomorphicGetSession(opts.headers);
 
@@ -51,6 +47,7 @@ export const createTRPCContext = async (opts: {
     session,
     db,
     token: authToken,
+    headers: opts.headers,
   };
 };
 
@@ -132,7 +129,7 @@ export const publicProcedure = t.procedure.use(timingMiddleware);
  */
 export const protectedProcedure = t.procedure
   .use(timingMiddleware)
-  .use(({ ctx, next }) => {
+  .use(async ({ ctx, next }) => {
     if (!ctx.session?.user) {
       throw new TRPCError({ code: "UNAUTHORIZED" });
     }

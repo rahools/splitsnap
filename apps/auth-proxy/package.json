@@ -10,7 +10,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@auth/core": "catalog:"
+    "@splitsnap/auth": "workspace:*"
   },
   "devDependencies": {
     "@splitsnap/eslint-config": "workspace:*",
