@@ -1,6 +1,6 @@
 "use client";
 
-import { useSuspenseQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 
 import { authClient } from "@splitsnap/auth";
 import { Button } from "@splitsnap/ui/button";
@@ -27,7 +27,7 @@ export function AuthShowcase() {
                 name: "test",
                 image: "https://example.com/image.png",
               });
-              queryClient.invalidateQueries(trpc.auth.pathFilter())
+              await queryClient.invalidateQueries(trpc.auth.pathFilter());
             }}
           >
             Sign Up ASD
@@ -41,7 +41,7 @@ export function AuthShowcase() {
                 email: "contact@rahools.com",
                 password: "super-secret-password",
               });
-              queryClient.invalidateQueries(trpc.auth.pathFilter())
+              await queryClient.invalidateQueries(trpc.auth.pathFilter());
             }}
           >
             Sign In ASD
@@ -63,7 +63,7 @@ export function AuthShowcase() {
           await authClient.revokeSession({
             token: session.session.token,
           });
-          queryClient.invalidateQueries(trpc.auth.pathFilter())
+          await queryClient.invalidateQueries(trpc.auth.pathFilter());
         }}
       >
         Sign out

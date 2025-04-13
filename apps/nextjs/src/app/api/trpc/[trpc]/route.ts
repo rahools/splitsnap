@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/require-await */
 "use server";
 
 import type { NextRequest } from "next/server";

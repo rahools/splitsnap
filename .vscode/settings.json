@@ -4,7 +4,12 @@
       "mode": "auto"
     }
   ],
-  "cSpell.words": [
-    "splitsnap"
-  ]
+  "cSpell.words": ["splitsnap"],
+  "editor.defaultFormatter": null,
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit"
+  }
 }

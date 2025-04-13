@@ -1,4 +1,4 @@
-import { betterAuth } from "better-auth"
+import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { toNextJsHandler } from "better-auth/next-js";
 
@@ -21,9 +21,7 @@ export const validateToken = async (
       user: true,
     },
   });
-  return session
-    ? session
-    : null;
+  return session ?? null;
 };
 
 export const auth = betterAuth({
@@ -31,11 +29,13 @@ export const auth = betterAuth({
     provider: "pg",
   }),
   emailAndPassword: {
-    enabled: true
-  }
-})
+    enabled: true,
+  },
+});
 
-export const baseAuthUrl = env.AUTH_URL ? `https://${env.AUTH_URL}` : `http://localhost:${process.env.PORT ?? 3000}`;
+export const baseAuthUrl = env.AUTH_URL
+  ? `https://${env.AUTH_URL}`
+  : "http://localhost:3000";
 
 export const nextJsHandler = toNextJsHandler(auth);
 export const nitroHandler = auth.handler;

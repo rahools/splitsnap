@@ -1,4 +1,4 @@
-import type {InferSelectModel} from "drizzle-orm";
+import type { InferSelectModel } from "drizzle-orm";
 import { pgTable, text, timestamp } from "drizzle-orm/pg-core";
 
 export const verification = pgTable("verification", {

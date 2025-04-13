@@ -13,7 +13,7 @@ export const postRouter = {
       orderBy: desc(Post.id),
       limit: 10,
     });
-    return []
+    return [];
   }),
 
   byId: publicProcedure

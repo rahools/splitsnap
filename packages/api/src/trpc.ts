@@ -20,7 +20,7 @@ import { db } from "@splitsnap/db/client";
  */
 const isomorphicGetSession = async (headers: Headers) => {
   const authToken = headers.get("Authorization") ?? null;
-  if (authToken) validateToken(authToken);
+  if (authToken) return await validateToken(authToken);
   return auth.api.getSession({ headers: headers });
 };
 

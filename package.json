@@ -26,6 +26,7 @@
   "devDependencies": {
     "@splitsnap/prettier-config": "workspace:*",
     "@turbo/gen": "^2.4.4",
+    "eslint-plugin-unused-imports": "^4.1.4",
     "prettier": "catalog:",
     "turbo": "^2.4.4",
     "typescript": "catalog:"

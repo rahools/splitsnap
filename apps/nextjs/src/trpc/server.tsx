@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/require-await */
 "use server";
 
 import type { TRPCQueryOptions } from "@trpc/tanstack-react-query";
