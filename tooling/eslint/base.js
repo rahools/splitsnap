@@ -6,7 +6,6 @@ import eslint from "@eslint/js";
 import importPlugin from "eslint-plugin-import";
 import turboPlugin from "eslint-plugin-turbo";
 import tseslint from "typescript-eslint";
-import unusedImports from "eslint-plugin-unused-imports";
 
 /**
  * All packages that leverage t3-env should use this rule
@@ -47,7 +46,6 @@ export default tseslint.config(
     plugins: {
       import: importPlugin,
       turbo: turboPlugin,
-      "unused-imports": unusedImports,
     },
     extends: [
       eslint.configs.recommended,

@@ -7,9 +7,10 @@ import { db } from "@splitsnap/db/client";
 
 import { env } from "../env";
 
-export type SessionWithUser = Session & {
+export interface SessionWithUser {
+  session: Session;
   user: User;
-};
+}
 
 export const validateToken = async (
   token: string,
@@ -21,7 +22,15 @@ export const validateToken = async (
       user: true,
     },
   });
-  return session ?? null;
+
+  if (!session) {
+    return null;
+  }
+
+  return {
+    session: session,
+    user: session.user,
+  };
 };
 
 export const auth = betterAuth({
